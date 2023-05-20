@@ -22,9 +22,9 @@ def get_proxy():
     broker = Broker(proxies)
     proxy_list = []
     tasks = asyncio.gather(
-        broker.find(types=['HTTPS'], limit=10), 
+        broker.find(types=['HTTPS'], limit=10),
         show(proxies, proxy_list))
-    loop = asyncio.get_event_loop()
+    loop = asyncio.get_event()
     loop.run_until_complete(tasks)
     return proxy_list
 
@@ -36,10 +36,10 @@ def clean_proxy():
         print(f'Running {proxy}')
         proxies = {
             'https': 'https://' + proxy
-            }  
+            }
         target_url = "https://www.mlbtraderumors.com"
 
-        try:    
+        try:
             res = rq.get(target_url, proxies=proxies, timeout=10)
         except EnvironmentError:
             print('Try Error!')
@@ -78,8 +78,8 @@ def start():
             if proxy_num >= len(code_list):
                 break
             else:
-                continue                
-                      
+                continue
+
         if not res.ok:
             print('Request fail')
             proxy_num += 1
@@ -87,7 +87,7 @@ def start():
                 break
             else:
                 continue
-        
+
         time.sleep(5)
         res.encoding = 'utf-8'
         soup_rumors = BeautifulSoup(res.text, 'html.parser')
@@ -142,9 +142,9 @@ def crawler(soup_rumors):
                     'Rumors',
                     date
                 ))
-        article_num += 1 
+        article_num += 1
         print('articles be added：', article_num)
-    
+
     # print(final_data)
 
     # with open('MLB_rumors.csv', 'w', newline='', encoding='utf-8-sig') as csvFile:
@@ -156,4 +156,5 @@ def crawler(soup_rumors):
 def main():
     start()
 
-main()
+if __name__ == '__main__':
+    main()
