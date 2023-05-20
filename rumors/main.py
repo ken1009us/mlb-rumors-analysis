@@ -24,7 +24,7 @@ def get_proxy():
     tasks = asyncio.gather(
         broker.find(types=['HTTPS'], limit=10),
         show(proxies, proxy_list))
-    loop = asyncio.get_event()
+    loop = asyncio.get_event_loop()
     loop.run_until_complete(tasks)
     return proxy_list
 
