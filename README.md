@@ -1,42 +1,60 @@
-# MLB Rumors Crawler
+# MLB Rumors Analysis
 
-This is a Python script that scrapes MLB trade rumors from the website [MLBTradeRumors.com](https://www.mlbtraderumors.com) using proxies for anonymity. It fetches the latest articles, extracts relevant information such as title, content, tags, date, and saves the data in a CSV file.
+This project analyzes MLB rumors data, performs sentiment analysis, and visualizes the results using Tableau.
+
+## Technology Integration
+
+- Python
+- TextBlob for Sentiment Analysis
+- pandas for Data Manipulation
+- Apache Airflow for Data Pipeline
+- Amazon EC2 for Deployment
+- Amazon S3 for Data Storage
+- Tableau for Data Visualization
 
 ## Prerequisites
 
-Before running the script, make sure you have the following installed:
+Before you begin, ensure you have met the following requirements:
 
-- Python 3.x
-- Requests library (`pip install requests`)
-- BeautifulSoup library (`pip install beautifulsoup4`)
-- ProxyBroker library (`pip install proxybroker`)
+- Python 3.11.5
+- TextBlob library
+- pandas library
+- Apache Airflow installed and configured
+- Amazon AWS account with EC2 and S3 access
+- Tableau Desktop or Tableau Public
 
-or
+## Installation
+
+Install the required Python libraries:
 
 ```bash
-pip install -r requirements.txt
+$ pip install textblob pandas
 ```
 
-## How to Use
+Clone this repository to your local machine:
 
-1. Clone this repository or download the `main.py` file.
-
-2. Install the required libraries mentioned in the prerequisites.
-
-3. Run the script using the command `python3 main.py`. The script will automatically search for usable proxies, clean them, and start scraping the MLB trade rumors.
-
-4. The scraped data will be stored in a CSV file named `MLB_rumors.csv` (currently commented out in the code). You can uncomment the relevant lines to enable CSV file generation and customize the file name and format if needed.
-
-## Important Note
-
-Please be mindful of web scraping ethics and legal guidelines when using this script. Make sure to respect the website's terms of service, use proxies responsibly, and avoid excessive requests to prevent any potential disruption or misuse.
-
-Feel free to modify the script to suit your specific needs or enhance its functionality.
-
-Happy scraping!
-
-## Credits
+```bash
+$ git clone https://github.com/ken1009us/mlb-rumors-analysis.git
 ```
-- Author: Shu-Hao Wu
-- Email: shwu2@illinois.edu
-```
+
+## Usage
+
+1. Set up Apache Airflow to create a data pipeline for MLB rumors data extraction, transformation, and loading (ETL).
+2. Run the Python script to perform sentiment analysis on MLB rumors data.
+3. Load the generated CSV files into Amazon S3.
+4. Configure Tableau to connect to the S3 bucket and visualize the data.
+
+## Files
+
+- `MLB_rumors.csv`: Raw MLB rumors data.
+- `tag_frequencies.csv`: Tag frequencies for team names and "transaction."
+- `tag_co_occurrences.csv`: Co-occurrence of tags.
+- `sentiment_analysis.csv`: Sentiment scores for MLB rumors articles.
+
+## Project Origin
+
+This project was inspired by the need to gain insights from MLB rumors data and visualize sentiment trends.
+
+## Disclaimer
+
+The information provided in this project is for educational and analytical purposes only. It does not constitute financial, legal, or professional advice.
