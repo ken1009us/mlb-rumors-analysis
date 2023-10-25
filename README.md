@@ -4,7 +4,7 @@ This project includes a comprehensive data pipeline for collecting, processing, 
 
 ## Pipeline Flow Chart
 
-![image](https://github.com/ken1009us/mlb-rumors-analysis/blob/master/img/pipeline.png "pipeline")
+![image](https://github.com/ken1009us/mlb-rumors-analysis/blob/master/img/pipeline-flow-chart.png "pipeline")
 
 ## Technology Integration
 
