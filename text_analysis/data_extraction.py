@@ -6,22 +6,36 @@ from bs4 import BeautifulSoup
 
 
 def get_data(url):
+    """
+    Fetch data from a given URL and return it as a BeautifulSoup object.
+
+    Args:
+        url (str): The URL to fetch data from.
+
+    Returns:
+        BeautifulSoup: The parsed HTML content.
+
+    Raises:
+        requests.exceptions.ConnectionError: If a connection error occurs.
+    """
     try:
         res = requests.get(url, timeout=5)
-
+        res.raise_for_status()
+        res.encoding = 'utf-8'
+        data = BeautifulSoup(res.text, 'html.parser')
+        return data
     except requests.exceptions.ConnectionError as e:
-        print(e)
-
-    if res.status_code != 200:
-        print('Request fail!')
-
-    res.encoding = 'utf-8'
-    data = BeautifulSoup(res.text, 'html.parser')
-
-    return data
+        print(f"Connection Error: {e}")
+        return None
 
 
 def get_user_input():
+    """
+    Prompt the user to enter desired years and months for data retrieval.
+
+    Returns:
+        tuple: Lists of selected years and months.
+    """
     years = []
     months = []
     while True:
@@ -35,7 +49,6 @@ def get_user_input():
         if month.lower() == 'done':
             break
 
-        # Validation
         if year.isdigit() and month.isdigit() and 1 <= int(month) <= 12:
             years.append(year)
             months.append(month)
@@ -46,6 +59,15 @@ def get_user_input():
 
 
 def get_article_content(raw_data):
+    """
+    Extract article content from a BeautifulSoup object.
+
+    Args:
+        raw_data (BeautifulSoup): The parsed HTML content.
+
+    Returns:
+        tuple: A list of articles and the URL of the last article.
+    """
     url_keyword_list = []
     articles_list = []
     all_content = raw_data.select('.content .entry-title a')
@@ -57,12 +79,24 @@ def get_article_content(raw_data):
     for url_slice_keyword in url_keyword_list:
         article_url = f'https://www.mlbtraderumors.com/{url_slice_keyword}'
         articles = get_data(article_url)
-        articles_list.append(articles)
+        if articles:
+            articles_list.append(articles)
 
     return articles_list, article_url
 
 
 def data_cleaning(articles, url, article_num):
+    """
+    Clean and format article data.
+
+    Args:
+        articles (list): List of BeautifulSoup objects representing articles.
+        url (str): The URL of the last article.
+        article_num (int): The number of articles processed.
+
+    Returns:
+        tuple: A list of cleaned article data and the updated article count.
+    """
     final_data = []
     for article in articles:
         article_title = article.select('.content .entry-header .entry-title')
@@ -102,6 +136,12 @@ def data_cleaning(articles, url, article_num):
 
 
 def save_to_csv(final_data):
+    """
+    Save cleaned article data to a CSV file.
+
+    Args:
+        final_data (list): List of cleaned article data.
+    """
     filename = 'data/MLB_rumors.csv'
     existing_data = []
     try:
@@ -117,8 +157,8 @@ def save_to_csv(final_data):
         if row[1] not in existing_urls:
             new_data.append(row)
 
-    with open(filename, 'a', newline='', encoding='utf-8-sig') as csvFile:
-        writer = csv.writer(csvFile)
+    with open(filename, 'a', newline='', encoding='utf-8-sig') as csv_file:
+        writer = csv.writer(csv_file)
         if not existing_data:
             writer.writerow(['title', 'url', 'content', 'tags', 'date'])
         for row in new_data:
@@ -126,6 +166,9 @@ def save_to_csv(final_data):
 
 
 def start():
+    """
+    Main function to execute the data retrieval and cleaning process.
+    """
     years, months = get_user_input()
     article_num = 0
     for year, month in zip(years, months):
