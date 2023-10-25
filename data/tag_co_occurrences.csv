@@ -1,0 +1,11 @@
+Tag Pair,Co-occurrence Count
+"('New York Mets', 'Transactions')",5
+"('Los Angeles Angels', 'Transactions')",5
+"('Oakland Athletics', 'Transactions')",4
+"('San Diego Padres', 'San Francisco Giants')",3
+"('Chicago Cubs', 'Pittsburgh Pirates')",3
+"('San Diego Padres', 'Transactions')",3
+"('Texas Rangers', 'Transactions')",3
+"('Arizona Diamondbacks', 'Transactions')",3
+"('New York Yankees', 'Transactions')",3
+"('Minnesota Twins', 'San Diego Padres')",2
