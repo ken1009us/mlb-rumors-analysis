@@ -1,5 +1,6 @@
 import requests
 import csv
+import pandas as pd
 
 
 from bs4 import BeautifulSoup
@@ -165,6 +166,19 @@ def save_to_csv(final_data):
             writer.writerow(row)
 
 
+def save_to_s3_bucket(final_data, bucket_name):
+    """
+    Save cleaned article data to an S3 bucket using pandas.
+
+    Args:
+        final_data (list): List of cleaned article data.
+        bucket_name (str): Name of the S3 bucket to save the file.
+    """
+    columns = ['title', 'url', 'content', 'tags', 'date']
+    df = pd.DataFrame(final_data, columns=columns)
+    df.to_csv(f"s3://{bucket_name}/MLB_rumors.csv")
+
+
 def start():
     """
     Main function to execute the data retrieval and cleaning process.
@@ -176,7 +190,8 @@ def start():
         data = get_data(target_url)
         articles, article_url = get_article_content(data)
         final_data, article_num = data_cleaning(articles, article_url, article_num)
-        save_to_csv(final_data)
+        # save_to_csv(final_data)
+        save_to_s3_bucket(final_data, "mlb-rumors-analysis-bucket")
 
     print("articles be added:", article_num)
 
