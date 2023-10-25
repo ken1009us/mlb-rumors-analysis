@@ -1,13 +1,13 @@
 # MLB Rumors Analysis
 
-This project analyzes MLB rumors data, performs sentiment analysis, and visualizes the results using Tableau.
+This project analyzes MLB rumors data, performs analysis, and visualizes the results using Tableau.
 
 ## Technology Integration
 
 - Python
 - TextBlob for Sentiment Analysis
 - pandas for Data Manipulation
-- Apache Airflow for Data Pipeline
+- Apache Airflow for Orchestrating Data Pipeline
 - Amazon EC2 for Deployment
 - Amazon S3 for Data Storage
 - Tableau for Data Visualization
@@ -39,17 +39,17 @@ $ git clone https://github.com/ken1009us/mlb-rumors-analysis.git
 
 ## Usage
 
-1. Set up Apache Airflow to create a data pipeline for MLB rumors data extraction, transformation, and loading (ETL).
-2. Run the Python script to perform sentiment analysis on MLB rumors data.
+1. Configure Apache Airflow and define a DAG to orchestrate the data pipeline for MLB rumors data extraction, transformation, and loading (ETL).
+2. Run the Airflow DAG to automatically handle data extraction, perform sentiment analysis on MLB rumors data, and load the processed data.
 3. Load the generated CSV files into Amazon S3.
 4. Configure Tableau to connect to the S3 bucket and visualize the data.
 
 ## Files
 
-- `MLB_rumors.csv`: Raw MLB rumors data.
-- `tag_frequencies.csv`: Tag frequencies for team names and "transaction."
-- `tag_co_occurrences.csv`: Co-occurrence of tags.
-- `sentiment_analysis.csv`: Sentiment scores for MLB rumors articles.
+- MLB_rumors.csv: Raw MLB rumors data.
+- tag_frequencies.csv: Tag frequencies for team names and "transaction."
+- tag_co_occurrences.csv: Co-occurrence of tags.
+- sentiment_analysis.csv: Sentiment scores for MLB rumors articles.
 
 ## Project Origin
 
