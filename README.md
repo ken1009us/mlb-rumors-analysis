@@ -6,6 +6,10 @@ This project includes a comprehensive data pipeline for collecting, processing, 
 
 ![image](https://github.com/ken1009us/mlb-rumors-analysis/blob/master/img/pipeline-flow-chart.png "pipeline")
 
+## Tableau Dashboard
+
+![image](https://github.com/ken1009us/mlb-rumors-analysis/blob/master/img/dashboard.png "dashboard")
+
 ## Technology Integration
 
 - Python
@@ -43,17 +47,17 @@ $ git clone https://github.com/ken1009us/mlb-rumors-analysis.git
 
 ## Usage
 
-1. Configure Apache Airflow and define a DAG to orchestrate the data pipeline for MLB rumors data extraction, transformation, and loading (ETL).
-2. Run the Airflow DAG to automatically handle data extraction, perform sentiment analysis on MLB rumors data, and load the processed data.
-3. Load the generated CSV files into Amazon S3.
-4. Configure Tableau to connect to the S3 bucket and visualize the data.
+1. Execute the script to start collecting data from the "MLB Trade Rumors" website for the specified years and months.
+2. The script will save the data in CSV files: MLB_rumors.csv, tag_frequencies.csv, tag_co_occurrences.csv, 3. sentiment_analysis.csv, and top_words_analysis.csv.
+4. Use any data visualization tool like Tableau to visualize the generated data.
 
 ## Files
 
 - MLB_rumors.csv: Raw MLB rumors data.
-- tag_frequencies.csv: Tag frequencies for team names and "transaction."
-- tag_co_occurrences.csv: Co-occurrence of tags.
+- tag_frequencies.csv: Tag frequencies for team names.
+- tag_co_occurrences.csv: Co-occurrence of team tags.
 - sentiment_analysis.csv: Sentiment scores for MLB rumors articles.
+- top_words_analysis.csv: Top N words used in the articles.
 
 ## Result
 
@@ -61,33 +65,25 @@ $ git clone https://github.com/ken1009us/mlb-rumors-analysis.git
 
 1. Tag Frequencies:
 
-- A list of tags (which are MLB teams and the term "transaction") and their respective counts. This report would tell you how often each team (or transaction) is mentioned in the articles.
-
-- For visualization in Tableau:
-  - A bar chart where each bar represents a team or transaction, and the height of the bar corresponds to the frequency of that tag.
+- A list of tags, which predominantly consist of MLB teams and the term "transactions," showcasing their respective mention counts in the articles. From the dashboard, teams like the Minnesota Twins, Cincinnati Reds, and San Francisco Giants were frequently discussed.
 
 2. Tag Co-occurrences:
 
-- A list of pairs of tags and how often they appear together in the same article. This helps in identifying which teams or transactions are frequently mentioned together, possibly indicating interactions or comparisons between them.
-
-- For visualization in Tableau:
-  - A heatmap where each cell corresponds to a pair of tags, and the color intensity indicates the frequency of their co-occurrence. Darker cells would indicate pairs of tags that often appear together.
+- A list showing pairs of tags and their joint appearance frequency in the same article. From the dashboard, it's evident that the Milwaukee Brewers and Chicago Cubs co-occur most frequently, indicating potential interactions or discussions between them.
 
 ### Sentiment Analysis Report:
 
 1. Sentiment Scores:
 
-- For each article, a sentiment score is calculated. This score, which ranges from -1 to 1, indicates the overall sentiment of the article. Negative values suggest negative sentiment, positive values suggest positive sentiment, and values close to zero indicate neutral sentiment.
-
-- For visualization in Tableau:
-  - A histogram showing the distribution of sentiment scores, allowing you to quickly see the general sentiment trend across articles.
-  - A scatter plot with articles on the y-axis and their corresponding sentiment scores on the x-axis. This visualization will let you pinpoint specific articles with strong positive or negative sentiment.
+- Each article possesses a sentiment score, ranging from negative values, suggesting negative sentiment, to positive values indicating positive sentiment. From the dashboard, articles tagged with Houston Astros recorded the highest positive sentiment score.
 
 2. Overall Sentiment Trend:
 
 - While not explicitly mentioned in the code, a subsequent analysis could involve plotting the average sentiment scores over time (e.g., monthly or yearly). This would help in understanding how sentiments towards MLB teams and transactions have evolved.
-- For visualization in Tableau:
-  - A line chart where the x-axis represents time (month/year) and the y-axis represents the average sentiment score. Peaks would indicate times of positive sentiment, while troughs indicate negative sentiment periods.
+
+### Top Baseball Keywords Analysis:
+
+- This report showcases the most frequently mentioned baseball keywords in the articles, exempting common stop words. From the dashboard, predominant words like hit, ERA, and walk were prevalent. Their respective counts are listed.
 
 ## Project Origin
 
@@ -96,3 +92,8 @@ This project was inspired by the need to gain insights from MLB rumors data and 
 ## Disclaimer
 
 The information provided in this project is for educational and analytical purposes only. It does not constitute financial, legal, or professional advice.
+
+## Author
+
+Name: Ken Wu
+Email: shwu2@illinois.edu
