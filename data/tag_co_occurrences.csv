@@ -1,11 +1,11 @@
-Tag Pair,Co-occurrence Count
-"('New York Mets', 'Transactions')",5
-"('Los Angeles Angels', 'Transactions')",5
-"('Oakland Athletics', 'Transactions')",4
-"('San Diego Padres', 'San Francisco Giants')",3
-"('Chicago Cubs', 'Pittsburgh Pirates')",3
-"('San Diego Padres', 'Transactions')",3
-"('Texas Rangers', 'Transactions')",3
-"('Arizona Diamondbacks', 'Transactions')",3
-"('New York Yankees', 'Transactions')",3
-"('Minnesota Twins', 'San Diego Padres')",2
+Tag1,Tag2,Co-occurrence Count
+Milwaukee Brewers,Pittsburgh Pirates,3
+Milwaukee Brewers,Chicago Cubs,3
+Pittsburgh Pirates,Chicago Cubs,3
+Tampa Bay Rays,San Diego Padres,2
+San Francisco Giants,San Diego Padres,2
+Minnesota Twins,San Diego Padres,2
+Milwaukee Brewers,Cincinnati Reds,2
+Pittsburgh Pirates,Cincinnati Reds,2
+Cincinnati Reds,Chicago Cubs,2
+San Francisco Giants,Tampa Bay Rays,2
