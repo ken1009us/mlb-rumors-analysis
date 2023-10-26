@@ -1,10 +1,13 @@
-import requests
+import calendar
 import csv
+import nltk
 import pandas as pd
+import requests
 
 from bs4 import BeautifulSoup
 from collections import Counter
 from itertools import combinations
+from nltk.corpus import stopwords
 from textblob import TextBlob
 from typing import List, Tuple, Optional
 
@@ -88,56 +91,105 @@ def perform_tag_analysis(data: pd.DataFrame) -> None:
     tag_counts = tags.value_counts()
 
     filtered_tags_df = tag_counts[
-        tag_counts.index.isin(TEAMS) |
-        tag_counts.index.str.contains('transaction', case=False)
+        tag_counts.index.isin(TEAMS)
     ].reset_index()
     filtered_tags_df.columns = ['Tag', 'Count']
     # filtered_tags_df.to_csv(f"s3://{BUCKET_NAME}/tag_frequencies.csv", index=False)
-    filtered_tags_df.to_csv(f"../data/tag_frequencies.csv", index=False)
+    filtered_tags_df.to_csv("../data/tag_frequencies.csv", index=False)
 
     co_occurrence = Counter()
     for _, row in data.iterrows():
         tags_in_row = set(row['tags'].split(';'))
-        filtered_tags = [tag for tag in tags_in_row if tag in TEAMS or 'transaction' in tag.lower()]
+        filtered_tags = [tag for tag in tags_in_row if tag in TEAMS]
         co_occurrence.update(combinations(filtered_tags, 2))
 
-    co_occurrence_df = pd.DataFrame(co_occurrence.most_common(10), columns=['Tag Pair', 'Co-occurrence Count'])
+    co_occurrence_df = pd.DataFrame({
+        'Tag1': [pair[0] for pair in co_occurrence.keys()],
+        'Tag2': [pair[1] for pair in co_occurrence.keys()],
+        'Co-occurrence Count': list(co_occurrence.values())
+    })
+    co_occurrence_df = co_occurrence_df.sort_values(by='Co-occurrence Count', ascending=False).head(10)
+
     # co_occurrence_df.to_csv(f"s3://{BUCKET_NAME}/tag_co_occurrences.csv", index=False)
-    co_occurrence_df.to_csv(f"../data/tag_co_occurrences.csv", index=False)
+    co_occurrence_df.to_csv("../data/tag_co_occurrences.csv", index=False)
 
 
 def perform_sentiment_analysis(data: pd.DataFrame) -> None:
     """Analyze and export sentiment scores for articles."""
-    sentiment_scores = data['content'].apply(lambda text: TextBlob(text).sentiment.polarity)
+    data['sentiment_score'] = data['content'].apply(lambda text: TextBlob(text).sentiment.polarity)
     sentiment_df = pd.DataFrame({
+        'article_id': data['article_id'],
         'title': data['title'],
-        'sentiment_score': sentiment_scores
+        'sentiment_score': data['sentiment_score']
     })
     # sentiment_df.to_csv(f"s3://{BUCKET_NAME}/sentiment_analysis.csv", index=False)
-    sentiment_df.to_csv(f"../data/sentiment_analysis.csv", index=False)
+    sentiment_df.to_csv("../data/sentiment_analysis.csv", index=False)
+
+
+def top_words_analysis(data: pd.DataFrame, n=10) -> None:
+    """Analyze and export the top n words from the content."""
+    nltk.download('stopwords', quiet=True)
+    stop_words = set(stopwords.words('english'))
+
+    baseball_keywords = {"era", "whip", "avg", "rbi", "slugging",
+                         "obp", "ops", "plate", "appearance",
+                         "run", "hit", "double", "triple", "walk"}
+
+    words_data = []
+    for idx, row in data.iterrows():
+        content_words = set(row['content'].split())
+        for word in content_words:
+            if word.lower() not in stop_words and word.lower() in baseball_keywords:
+                words_data.append({'Word': word, 'article_id': str(row['article_id'])})
+
+    words_df = pd.DataFrame(words_data)
+    word_counts = words_df.groupby('Word').size().reset_index(name='Count')
+    word_article_ids = words_df.groupby('Word')['article_id'].apply(list).reset_index()
+
+    top_words_df = pd.merge(word_counts, word_article_ids, on='Word')
+    top_words_df = top_words_df.nlargest(n, 'Count')
+    # top_words_df.to_csv(f"s3://{BUCKET_NAME}/top_{n}_words.csv", index=False)
+    top_words_df.to_csv(f"../data/top_{n}_words.csv", index=False)
 
 # ----------------------------------------- Main Execution -----------------------------------------
 
 def main() -> None:
     """Main execution function."""
     all_articles = []
-    years, months = get_user_input()
-    for year, month in zip(years, months):
-        monthly_url = f"{MLB_RUMORS_BASE_URL}/{year}/{month}"
-        monthly_page = fetch_html_from_url(monthly_url)
-        if not monthly_page:
-            continue
-        article_links = extract_article_links(monthly_page)
-        for article_link in article_links:
-            details = extract_article_details(article_link)
-            if details:
-                all_articles.append(details)
-                print(f'Article "{details[0]}" added.')
+    # years, months = get_user_input()
+    # for year, month in zip(years, months):
+    for year in range(2023, 2024):
+        print(f"------Starting crawling {year} data------")
+        last_month = 10 if year == 2023 else 12
+        for month in range(1, last_month + 1):
+            month_name = calendar.month_name[month]
+            print(f"------------ {month_name} ------------")
+            monthly_url = f"{MLB_RUMORS_BASE_URL}/{year}/{month}"
+            monthly_page = fetch_html_from_url(monthly_url)
+            if not monthly_page:
+                continue
+            article_links = extract_article_links(monthly_page)
+            for article_link in article_links:
+                details = extract_article_details(article_link)
+                if details:
+                    all_articles.append(details)
+                    print(f'Article "{details[0]}" added.')
 
+    print("------------------Done!------------------")
+    print(f"{len(all_articles)} rumors added.")
     df = pd.DataFrame(all_articles, columns=['title', 'url', 'content', 'tags', 'date'])
-    df.to_csv("../data/MLB_rumors.csv")
+    df['article_id'] = df.index
+    df = df[['article_id', 'title', 'url', 'content', 'tags', 'date']]
+    df.to_csv("../data/MLB_rumors.csv", index=False)
+    print("-------Starting sentiment analysis-------")
     perform_sentiment_analysis(df)
+    print("------------------Done!------------------")
+    print("----------Starting tag analysis----------")
     perform_tag_analysis(df)
+    print("------------------Done!------------------")
+    print("-------Starting Top Words Analysis-------")
+    top_words_analysis(df, 10)
+    print("------------------Done!------------------")
 
     # all_articles = []
     # for year in range(2020, 2024):
@@ -154,11 +206,21 @@ def main() -> None:
     #                 all_articles.append(details)
     #                 print(f'Article "{details[0]}" added.')
 
+    # print("------------------Done!------------------")
+    # print(f"{len(all_articles)} rumors added.")
     # df = pd.DataFrame(all_articles, columns=['title', 'url', 'content', 'tags', 'date'])
-
-    # df.to_csv(f"s3://{BUCKET_NAME}/MLB_rumors.csv")
+    # df['article_id'] = df.index
+    # df = df[['article_id', 'title', 'url', 'content', 'tags', 'date']]
+    # df.to_csv(f"s3://{BUCKET_NAME}/MLB_rumors.csv", index=False)
+    # print("-------Starting sentiment analysis-------")
     # perform_sentiment_analysis(df)
+    # print("------------------Done!------------------")
+    # print("----------Starting tag analysis----------")
     # perform_tag_analysis(df)
+    # print("------------------Done!------------------")
+    # print("-------Starting Top Words Analysis-------")
+    # top_words_analysis(df, 10)
+    # print("------------------Done!------------------")
 
 if __name__ == '__main__':
     main()
