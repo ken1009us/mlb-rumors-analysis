@@ -95,5 +95,5 @@ The information provided in this project is for educational and analytical purpo
 
 ## Author
 
-Name: Ken Wu
-Email: shwu2@illinois.edu
+- Name: Ken Wu
+- Email: shwu2@illinois.edu
