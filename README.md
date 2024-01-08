@@ -20,9 +20,9 @@ This project includes a comprehensive data pipeline for collecting, processing, 
 - Amazon S3 for Data Storage
 - Tableau for Data Visualization
 
-## Prerequisites
+## How did I complete this project?
 
-Before you begin, ensure you have met the following requirements:
+### Prerequisites
 
 - Python 3.11.5
 - TextBlob library
@@ -31,7 +31,7 @@ Before you begin, ensure you have met the following requirements:
 - Amazon AWS account with EC2 and S3 access
 - Tableau Desktop or Tableau Public
 
-## Installation
+### Installation
 
 Install the required Python libraries:
 
@@ -39,19 +39,13 @@ Install the required Python libraries:
 $ pip install textblob pandas
 ```
 
-Clone this repository to your local machine:
-
-```bash
-$ git clone https://github.com/ken1009us/mlb-rumors-analysis.git
-```
-
-## Usage
+### Usage
 
 1. Execute the script to start collecting data from the "MLB Trade Rumors" website for the specified years and months.
 2. The script will save the data in CSV files: MLB_rumors.csv, tag_frequencies.csv, tag_co_occurrences.csv, 3. sentiment_analysis.csv, and top_words_analysis.csv.
 4. Use any data visualization tool like Tableau to visualize the generated data.
 
-## Files
+### Files
 
 - MLB_rumors.csv: Raw MLB rumors data.
 - tag_frequencies.csv: Tag frequencies for team names.
